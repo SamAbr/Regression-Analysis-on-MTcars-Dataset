@@ -1,0 +1,150 @@
+---
+title: "Regression Analysis on MTcars Dataset"
+author: "By Samuel Abrha G.mariam"
+date: "2024-02-22"
+output: html_document
+---
+
+## Introduction
+
+The aim of this task is to examine the correlation between horsepower and miles per gallon within the 'mtcars' dataset by utilizing descriptive statistics, Pearson correlation analysis, and simple linear regression.
+
+The 'mtcars' dataset originates from the 1974 Motor Trend US magazine and encompasses fuel consumption along with ten other facets of automobile design and performance across 32 automobiles, specifically models from 1973 to 1974. This dataset is structured as a data frame with 32 observations and 11 numeric variables.
+
+The variables within the dataset are as follows:
+
+-   mpg: Miles per (US) gallon\
+-   cyl: Number of cylinders\
+-   disp: Displacement (cubic inches)\
+-   hp: Gross horsepower\
+-   drat: Rear axle ratio\
+-   wt: Weight (in thousands of pounds)\
+-   qsec: 1/4 mile time\
+-   vs: Engine type (0 = V-shaped, 1 = straight)\
+-   am: Transmission type (0 = automatic, 1 = manual)\
+-   gear: Number of forward gears\
+-   carb: Number of carburetors
+
+```{r warning=FALSE, results='hide', message=FALSE}
+# Loading important libraries
+library(tidyverse)
+library(dplyr)
+# Getting the documentation of the data
+?mtcars
+```
+
+## Descriptive Statistics
+
+### Mean and Standard deviation of mpg and hp
+
+Here, we will examine the mean and standard deviation of mpg and hp.
+
+```{r}
+data(mtcars) # calling the data
+new_df <- data.frame(mean(mtcars$mpg), sd(mtcars$mpg), mean(mtcars$hp), sd(mtcars$hp)) # creating a data frame
+title <- c("Average_mpg", "SD_of_mpg", "Average_hp", "SD_of_hp") # Assigning the title of columns to a variable
+names(new_df) <- title # Combining the column names and the data frame
+new_df
+```
+
+### Five-number summary
+
+In this segment, we'll examine the minimum, 1st quartile, median, 3rd quartile, and maximum for both horsepower and miles per gallon (mpg).
+
+```{r}
+# Calculating the five number summary for mpg
+five_num_mpg <- fivenum(mtcars$mpg)
+five_num_mpg
+```
+
+```{r}
+# Calculating the five number summary for hp
+five_num_hp <- fivenum(mtcars$hp)
+five_num_hp
+```
+
+### Interpretation
+
+According to our analysis, the mean distance covered by the 32 car models using one gallon (3.78541 liters) of fuel is 20.09062 miles (32.32580758 kilometers), with a standard deviation of 6.026948. Additionally, the average gross horsepower among these cars is 146.6875, with a standard deviation of 68.56287.
+
+The shortest distance covered per gallon of fuel is 10.40 miles, while the longest distance is 33.90 miles. When arranged in ascending order of miles per gallon (mpg), the median mpg, which in this case is the average of the 16th and 17th cars, stands at 19.20 miles per gallon. Additionally, 25% of the 32 observed cars are capable of covering less than 15.35 miles per gallon, while 75% of them cover less than 22.8 miles per gallon.
+
+The vehicle with the lowest gross horsepower boasts 52 horsepower, while the one with the highest horsepower reaches 335. When arranged in ascending order based on horsepower, the median horsepower among them stands at 123. Furthermore, 25% of the 32 cars possess a horsepower below 96, while 75% of them have a horsepower less than 180.
+
+## Pearson Correlation Analysis
+
+### Pearson correlation coefficient between horsepower and miles per gallon
+
+Let's see how they are associated by using the pearson correlation coefficient.
+
+```{r}
+# calculating the r
+cor(mtcars$mpg, mtcars$hp)
+```
+
+**r = -0.7761684**
+
+### Interpretation
+
+A Pearson correlation coefficient of **-0.7761684** between miles per gallon (mpg) and horsepower of cars indicates a strong negative correlation between these two variables. Here's what it means:
+
+Strength of Correlation: The absolute value of the correlation coefficient, 0.7761684, is close to 1, suggesting a strong relationship between mpg and horsepower. This suggests that the data points on their scatterplot are positioned near the regression line.
+
+Direction of Correlation: The negative sign indicates an inverse relationship between mpg and horsepower. In other words, among the 32 cars examined, as a car's horsepower increases, its miles per gallon decreases. This occurs because higher horsepower typically leads to increased fuel consumption, which in turn reduces the distance a car can cover per gallon of fuel. It's important to note that mpg is determined by dividing the miles covered by the amount of fuel consumed in gallons, meaning that an increase in fuel consumption (the denominator) results in a decrease in mpg. It's also worth mentioning that mpg isn't tied to a car's speed; even though a car with high horsepower may be fast and cover more distance in less time, it doesn't travel a greater distance per gallon of fuel due to the rapid fuel consumption associated with higher horsepower engines.
+
+In summary, a Pearson correlation coefficient of -0.7761684 between mpg and horsepower indicates a strong negative association, implying that changes in one variable (horsepower) are associated with predictable changes in the other variable (mpg), but in the opposite direction.
+
+## Simple Linear Regression
+
+### linear regression analysis
+
+Let's conduct a simple linear regression analysis with horsepower as the independent variable and miles per gallon (mpg) as the dependent variable.
+
+```{r}
+model <- lm(mpg ~ hp, data = mtcars)
+summary(model)
+```
+
+**Call**: This line shows the function call used to fit the regression model. It indicates the formula used (mpg \~ hp) and the dataset (mtcars).
+
+**Residuals**: Residuals are the differences between the observed values of the dependent variable (mpg) and the values predicted by the regression model. This section provides summary statistics of the residuals, including the minimum, first quartile, median, third quartile, and maximum values.
+
+**Coefficients**: This section presents the estimated coefficients of the regression model. Estimate: The estimated intercept and slope coefficients are shown under "Intercept" and "hp" respectively.\
+Std. Error: Standard errors estimate the variability of the coefficient estimates.\
+t value: The t-value is the ratio of the estimated coefficient to its standard error. It measures the significance of each coefficient.\
+Pr(\>\|t\|): The p-value indicates the significance of each coefficient. Lower p-values suggest that the corresponding coefficient is significantly different from zero.
+
+**Significance codes**: The number of asterisks () indicates the level of significance. For example, "\*\*" means highly significant (p \< 0.001).
+
+**Residual standard error**: This is an estimate of the standard deviation of the residuals. It indicates the average amount by which the observed values deviate from the predicted values.
+
+**Multiple R-squared and Adjusted R-squared**: These statistics measure the proportion of variance in the dependent variable (mpg) explained by the independent variable (hp). Multiple R-squared considers all predictors in the model, while Adjusted R-squared adjusts for the number of predictors and the sample size.
+
+**F-statistic**: This is the result of an overall significance test of the regression model. It evaluates whether the regression model as a whole is statistically significant in predicting the dependent variable.
+
+**p-value**: The p-value associated with the F-statistic indicates the probability of observing the data if the null hypothesis (the regression model has no explanatory power) were true. A small p-value (\< 0.05) suggests that the regression model is statistically significant.\
+Here, we have a **p-value = 1.788e-07**, this indicates the likelihood of observing the test results while the null hypothesis is true, which is small enough to say the correlation is **HIGHLY SIGNIFICANT**.
+
+### Regression equation
+
+Based on the provided data above, we derive an intercept of 30.09886 and a coefficient for the independent variable of -0.06823. Consequently, our regression equation is as follows:\
+**Predicted mpg = 30.09886 − 0.06823 × horsepower**
+
+### Interpretation of the slope and intercept
+
+In the context of our regression equation, which is:\
+**Predicted mpg = 30.09886 − 0.06823 × horsepower**
+
+The slope of -0.06823 indicates the rate of change in predicted miles per gallon (mpg) for every one unit change in horsepower. Specifically, For every one unit increase in horsepower, the predicted miles per gallon (mpg) decreases by 0.06823 units. Conversely, for every one unit decrease in horsepower, the predicted miles per gallon (mpg) increases by 0.06823 units. So, in this equation, the slope of -0.06823 quantifies the change in predicted mpg per unit change in horsepower. This trend suggests that cars with more powerful engines (higher horsepower) tend to be less fuel-efficient, covering fewer miles per gallon of fuel compared to cars with less powerful engines.
+
+The intercept in the regression equation represents the value of the dependent variable (in this case, predicted miles per gallon, or mpg) when all independent variables (in this case, horsepower) are equal to zero.
+
+The intercept is **30.09886**. So, when the horsepower of a car is zero, the predicted miles per gallon (mpg) is 30.09886. However, it's important to note that this interpretation might not be practically meaningful, as it's unlikely for a car to have exactly zero horsepower and still be operational. Even the smallest, most basic engines typically produce some measurable horsepower to propel the vehicle. A car with 0 horsepower would likely be unable to move under its own power. However, there might be non-operational vehicles, such as damaged or dismantled cars, that technically have 0 horsepower. But in terms of functioning vehicles, having 0 horsepower would be highly improbable. Therefore, in this case, the intercept just serves as a reference point for the regression line.
+
+### Scatter plot along with the regression line
+
+```{r}
+ggplot(mtcars, aes(hp, mpg)) + geom_point() + geom_smooth(method = "lm")
+```
+
+<blockquote>***Thank you***</blockquote>
